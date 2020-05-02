@@ -5,27 +5,43 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public float speed = 3f;
-    public int point;
+    
     public Text pointCounter;
+    public BacteriMotor motor;
+    public Camera cam;
     void Update()
     {
-        pointCounter.text = "Point : " + point;
-    }
+        pointCounter.text = "Point : " + motor.xpPoint;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Food")
+        if (Input.GetMouseButton(0))
         {
-            Destroy(other.gameObject);
-            point++;
-        }
-    }
+            Ray _ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit _hit;
+            if (Physics.Raycast(_ray, out _hit))
+            {
+                Vector3 _mousse = _hit.point;
+                motor.GoDir(_mousse);
+            }
 
-    private void FixedUpdate()
-    {
-        Vector3 _vel = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
-        transform.position += _vel * Time.fixedDeltaTime * speed;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            motor.UsePower(Power.Melee);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            motor.UsePower(Power.Dash);
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            motor.UsePower(Power.Ranged);
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            motor.UsePower(Power.SlowDown);
+        }
+
     }
 
     
