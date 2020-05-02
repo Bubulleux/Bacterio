@@ -33,5 +33,6 @@ public class PowerHud : MonoBehaviour
         ReloadTime.text = "Reload Time: " + motor.dicPowerLvl[power].reloadTime + "S";
         upgradeBut.interactable = motor.xpPoint >= motor.dicPowerLvl[power].price;
         Reload.sizeDelta = new Vector2(0f, Mathf.Lerp(0f, 60f, motor.dicPowerLvl[power].reloadCoolDown / motor.dicPowerLvl[power].reloadTime));
+
     }
 }

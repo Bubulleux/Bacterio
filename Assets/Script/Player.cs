@@ -1,17 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     
-    public Text pointCounter;
     public BacteriMotor motor;
     public Camera cam;
+    public void Start()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>().player = gameObject;
+    }
+
     void Update()
     {
-        pointCounter.text = "Point : " + motor.xpPoint;
+        
 
         if (Input.GetMouseButton(0))
         {
@@ -42,7 +45,17 @@ public class Player : MonoBehaviour
             motor.UsePower(Power.SlowDown);
         }
 
+
+
+        if (Input.GetKey(KeyCode.F1))
+        {
+            motor.xpPoint++;
+            motor.lvl++;
+        }
+        
+        
+
     }
 
-    
+
 }

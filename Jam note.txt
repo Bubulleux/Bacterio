@@ -3,3 +3,35 @@ Bacterio
 
 	lien github
 	Animation récuparation xp
+	Dead
+	Point Hud
+	tank dist
+	ninja melee
+
+Note:
+Bienvenue dans Bacterio.
+
+Présentation:
+Bacterio est un jeux simple tu incarne un bactérie qui doit évoluer dans un monde de brute. Ton bute survivre en tamélionrent pour être de plus en plus fort.
+
+Prise en main:
+Tu te déplace avec la sourie en restent apuier sur click gauche.
+Tu a des pouvoir que tu peut améliorer.
+Melee: C'est un attack de corp a corp tout se qu'il y a de plus simple. (A)
+Dash: C'est un bonus qui tu donne un bost de vitesse pendant un certain temps. (Z)
+Range: C'est un attack a distance, ça envoi un projectil qui ira automatiquement ver l'énement le plus proche pour lui infliger des degat. (E)
+SlowDown: C'est une attaque qui ralenter tout les énemie autoure de toi. (R)
+
+Tu a aussi en haut a droite des Bost.
+
+Crédit:
+Made by a Cat who loves Cookies : Bubulle
+
+Tu peut aller voire mon GitHub j'ai fait un BomberMan Multijoueur.
+GitHub: https://github.com/Bubulleux
+
+C'est bon tu est fint près pour jouer.
+
+PS: Désoler pour les faute.
+
+

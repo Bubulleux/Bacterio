@@ -14,7 +14,7 @@ public class Stat : MonoBehaviour
     public Text stat;
     void Start()
     {
-        but.onClick.AddListener(delegate { motor.AddStat(stName);  Debug.Log(motor.dicStat[stName]); });
+        but.onClick.AddListener(delegate { motor.AddStat(stName); });
         stat.text = stName.ToString();
     }
 
