@@ -30,19 +30,47 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            motor.UsePower(Power.Melee);
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                motor.Upgrade(Power.Melee);
+            }
+            else
+            {
+                motor.UsePower(Power.Melee);
+            }
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            motor.UsePower(Power.Dash);
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                motor.Upgrade(Power.Dash);
+            }
+            else
+            {
+                motor.UsePower(Power.Dash);
+            }
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            motor.UsePower(Power.Ranged);
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                motor.Upgrade(Power.Ranged);
+            }
+            else
+            {
+                motor.UsePower(Power.Ranged);
+            }
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            motor.UsePower(Power.SlowDown);
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                motor.Upgrade(Power.SlowDown);
+            }
+            else
+            {
+                motor.UsePower(Power.SlowDown);
+            }
         }
 
 
@@ -52,8 +80,28 @@ public class Player : MonoBehaviour
             motor.xpPoint++;
             motor.lvl++;
         }
-        
-        
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            motor.AddStat(Stats.Speed);
+
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            motor.AddStat(Stats.Attack);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            motor.AddStat(Stats.BonnusXP);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            motor.AddStat(Stats.Regene);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            motor.AddStat(Stats.Defence);
+        }
 
     }
 

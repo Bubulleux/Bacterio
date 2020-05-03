@@ -12,6 +12,7 @@ public class HUDManager : MonoBehaviour
     public Text lvlText;
     public RectTransform healBarre;
     public Text xpPointDisplay;
+    public Text healText;
     void Start()
     {
 
@@ -20,10 +21,11 @@ public class HUDManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        xpBarre.sizeDelta = new Vector2(Mathf.Lerp(0, 294, player.GetComponent<BacteriMotor>().xp), 0f);
-        lvlText.text = "Levels: " + player.GetComponent<BacteriMotor>().lvl;
-        healBarre.sizeDelta = new Vector2(Mathf.Lerp(0, 294, player.GetComponent<BacteriMotor>().heal / 100f), 0f);
-        xpPointDisplay.text = "Xp Point: " + player.GetComponent<BacteriMotor>().xpPoint;
+        xpBarre.sizeDelta = new Vector2(0f, Mathf.Lerp(0, 300, player.GetComponent<BacteriMotor>().xp));
+        lvlText.text = "Lvl: " + player.GetComponent<BacteriMotor>().lvl;
+        healBarre.sizeDelta = new Vector2(Mathf.Lerp(0, 400, player.GetComponent<BacteriMotor>().heal / 100f), 0f);
+        xpPointDisplay.text = "XP: " + player.GetComponent<BacteriMotor>().xpPoint;
+        healText.text = player.GetComponent<BacteriMotor>().heal.ToString();
     }
 
     [Serializable]

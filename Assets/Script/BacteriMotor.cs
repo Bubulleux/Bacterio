@@ -10,11 +10,13 @@ public class BacteriMotor : MonoBehaviour
     public float xp;
     private float regneneCoolDown;
     private float speed = 1f;
+    public bool god;
 
     public Dictionary<Stats, int> dicStat = new Dictionary<Stats, int>();
     public Dictionary<Power, PowerStruc> dicPowerLvl = new Dictionary<Power, PowerStruc>();
 
     public GameObject bullet;
+    public GameObject food;
 
     // Start is called before the first frame update
     void Start()
@@ -64,35 +66,54 @@ public class BacteriMotor : MonoBehaviour
             }
         }
 
-        if (heal <= 0)
+        if (heal <= 0 && !god)
         {
+            Debug.Log(food);
+            GameObject _food = Instantiate(food, transform.position, Quaternion.identity, GameObject.Find("Foods").transform);
+            _food.GetComponent<Xp>().xpCount = lvl * lvl;
+            _food.GetComponent<Xp>().size = 3;
             Destroy(gameObject);
+        }
+
+        if (transform.position.x > 100f)
+        {
+            transform.position = new Vector3(100f, 0f, transform.position.z);
+        }
+        if (transform.position.x < -100f)
+        {
+            transform.position = new Vector3(-100f, 0f, transform.position.z);
+        }
+        if (transform.position.z > 100f)
+        {
+            transform.position = new Vector3(transform.position.x, 0f, 100f);
+        }
+        if (transform.position.z < -100f)
+        {
+            transform.position = new Vector3(transform.position.x, 0f, -100f);
         }
     }
 
     public void GoDir(Vector3 _where)
     {
-        if (_where.x < 100f && _where.x > -100f && _where.y < 100f && _where.y > -100f)
+        if (_where.x < 100f && _where.x > -100f && _where.z < 100f && _where.z > -100f)
         {
-            Vector3 _dif = _where - transform.position;
-            _dif = new Vector3(_dif.x, 0f, _dif.z).normalized;
-            //transform.rotation = Quaternion.LookRotation(_dif);
-            transform.Translate(_dif * 3f * Time.deltaTime * (1 + dicStat[Stats.Speed] * 0.2f) * speed, Space.Self);
+           
         }
+        Vector3 _dif = _where - transform.position;
+        _dif = new Vector3(_dif.x, 0f, _dif.z).normalized;
+        //transform.rotation = Quaternion.LookRotation(_dif);
+        transform.Translate(_dif * 3f * Time.deltaTime * (1 + dicStat[Stats.Speed] * 0.2f) * speed, Space.Self);
     }
 
-    private void OnTriggerEnter(Collider other)
+
+    public void TakeXP(int _xp)
     {
-        if (other.tag == "Food")
-        {
-            Destroy(other.gameObject);
-            xp += 0.5f * Mathf.Pow(0.8f,lvl) * (dicStat[Stats.BonnusXP] + 1);
-        }
+        xp += _xp * Mathf.Pow(0.8f, lvl) * (dicStat[Stats.BonnusXP] + 1);
     }
     
     public void AddStat(Stats _stat)
     {
-        if (dicStat[_stat] < 10)
+        if (dicStat[_stat] < 10 && xpPoint != 0)
         {
             dicStat[_stat]++;
             xpPoint--;
@@ -101,7 +122,7 @@ public class BacteriMotor : MonoBehaviour
 
     public void Upgrade(Power _power)
     {
-        if (true)
+        if (xpPoint >= dicPowerLvl[_power].price)
         {
             xpPoint -= dicPowerLvl[_power].price;
             dicPowerLvl[_power].lvl++;
@@ -121,27 +142,27 @@ public class BacteriMotor : MonoBehaviour
         if (canUse(_power))
         {
             dicPowerLvl[_power].reloadCoolDown = dicPowerLvl[_power].reloadTime;
+            float degatMultiplier = 1 + dicStat[Stats.Attack] * 0.3f;
             if (_power == Power.Melee)
             {
-                Collider[] _enemysDegat = Physics.OverlapSphere(transform.position, 1f);
+                Collider[] _enemysDegat = Physics.OverlapSphere(transform.position, 3f);
                 foreach(Collider enemy in _enemysDegat)
                 {
                     if (enemy.tag == "Bacterie" && enemy.gameObject != gameObject && !enemy.isTrigger)
                     {
-                        enemy.gameObject.GetComponent<BacteriMotor>().Degat(10 * dicPowerLvl[Power.Melee].lvl);
+                        enemy.gameObject.GetComponent<BacteriMotor>().Degat(Mathf.RoundToInt(10 * dicPowerLvl[Power.Melee].lvl * degatMultiplier));
                     }
                 }
             }
             if (_power == Power.Dash)
             {
-                StartCoroutine(speedRatio(2f + dicPowerLvl[Power.Dash].lvl * 0.2f, 1f));
+                StartCoroutine(speedRatio(2f + dicPowerLvl[Power.Dash].lvl * 2f, 0.15f));
             }
             if (_power == Power.Ranged)
             {
                 GameObject _bullet = Instantiate(bullet, new Vector3(transform.position.x,0.7f, transform.position.z), Quaternion.identity);
                 _bullet.GetComponent<Bullet>().range = 3 + dicPowerLvl[Power.Ranged].lvl;
-                _bullet.GetComponent<Bullet>().speed = 2 + dicPowerLvl[Power.Ranged].lvl;
-                _bullet.GetComponent<Bullet>().degat = 10 * dicPowerLvl[Power.Ranged].lvl;
+                _bullet.GetComponent<Bullet>().degat = Mathf.RoundToInt(10 * dicPowerLvl[Power.Ranged].lvl * degatMultiplier);
                 float minDist = Mathf.Infinity;
                 GameObject target = null;
                 foreach(GameObject _go in GameObject.FindGameObjectsWithTag("Bacterie"))
@@ -157,7 +178,7 @@ public class BacteriMotor : MonoBehaviour
             }
             if (_power == Power.SlowDown)
             {
-                Collider[] _enemysDegat = Physics.OverlapSphere(transform.position, dicPowerLvl[Power.SlowDown].lvl * 2f);
+                Collider[] _enemysDegat = Physics.OverlapSphere(transform.position, 5f);
                 foreach (Collider enemy in _enemysDegat)
                 {
                     if (enemy.tag == "Bacterie" && enemy.gameObject != gameObject && !enemy.isTrigger)
@@ -172,6 +193,10 @@ public class BacteriMotor : MonoBehaviour
     public void Degat(int _degat)
     {
         heal -= Mathf.RoundToInt(_degat * Mathf.Pow(0.9f, dicStat[Stats.Defence]));
+        if (Vector3.Distance(transform.position, GameObject.Find("Player").transform.position) <= 15f)
+        {
+            GetComponent<AudioSource>().Play();
+        }
     }
 
     public IEnumerator speedRatio(float _ratio, float _time)

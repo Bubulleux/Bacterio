@@ -8,6 +8,10 @@ Bacterio
 	tank dist
 	ninja melee
 
+asset
+https://www.fesliyanstudios.com/play-mp3/4004
+https://www.harriswolff.com/fr/piste/1144
+
 Note:
 Bienvenue dans Bacterio.
 

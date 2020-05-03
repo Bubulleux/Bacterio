@@ -13,7 +13,7 @@ public class MenuManager : MonoBehaviour
         {
             pauseMenu.SetActive(!pauseMenu.activeSelf);
         }
-        if (pauseMenu.activeSelf)
+        if (gameOverMenu.activeSelf)
         {
             pauseMenu.SetActive(false);
         }

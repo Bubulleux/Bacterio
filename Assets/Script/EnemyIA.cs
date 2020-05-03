@@ -7,6 +7,7 @@ public class EnemyIA : MonoBehaviour
 {
     public BacteriMotor motor;
     public GameObject Player;
+    public bool debug;
 
     public GameObject target;
     public Actions action;
@@ -22,9 +23,9 @@ public class EnemyIA : MonoBehaviour
                 {Stats.BonnusXP, 2f },
                 {Stats.Regene, 2f },
                 {Stats.Defence, 1f },
-                {Power.Melee, 1f },
+                {Power.Melee, 4f },
                 {Power.Dash, 4f },
-                {Power.Ranged, 4f },
+                {Power.Ranged, 1f },
                 {Power.SlowDown, 2f }
             }
         },
@@ -35,9 +36,9 @@ public class EnemyIA : MonoBehaviour
                 {Stats.BonnusXP, 2f },
                 {Stats.Regene, 2f },
                 {Stats.Defence, 2f },
-                {Power.Melee, 4f },
+                {Power.Melee, 1f },
                 {Power.Dash, 1f },
-                {Power.Ranged, 1f },
+                {Power.Ranged, 4f },
                 {Power.SlowDown, 2f }
             }
         },
@@ -82,12 +83,12 @@ public class EnemyIA : MonoBehaviour
             {
                 if (IAType == TypeIA.ninja)
                 {
-                    buyObjectif = Power.Ranged;
+                    buyObjectif = Power.Melee;
                 }
 
                 if(IAType == TypeIA.tank)
                 {
-                    buyObjectif = Power.Melee;
+                    buyObjectif = Power.Ranged;
                 }
 
                 if(IAType == TypeIA.normal)
@@ -138,6 +139,7 @@ public class EnemyIA : MonoBehaviour
                 {
                     motor.AddStat((Stats)buyObjectif);
                     buyObjectif = null;
+                    return;
                 }
             }
             if (buyObjectif.GetType() == typeof(Power))
@@ -146,6 +148,7 @@ public class EnemyIA : MonoBehaviour
                 {
                     motor.Upgrade((Power)buyObjectif);
                     buyObjectif = null;
+                    return;
                 }
             }
         }
@@ -195,7 +198,20 @@ public class EnemyIA : MonoBehaviour
                     target = _go;
                 }
             }
-            if (_go.tag == "Food" && action != Actions.flee && action != Actions.hunt && dist < minDist)
+            if (_go.tag == "Heal" && motor.heal < 100)
+            {
+                if (action != Actions.heal)
+                {
+                    minDist = Mathf.Infinity;
+                }
+                if (minDist > dist)
+                {
+                    minDist = dist;
+                    target = _go;
+                    action = Actions.heal;
+                }
+            }
+            if (_go.tag == "Food" && action != Actions.flee && action != Actions.hunt && action != Actions.heal && dist < minDist)
             {
                 target = _go;
                 action = Actions.farm;
@@ -207,22 +223,67 @@ public class EnemyIA : MonoBehaviour
         {
             if (action == Actions.hunt)
             {
-                hunt();
+
+                float dist = Vector3.Distance(transform.position, target.transform.position);
+                float minDistAttack = 0f;
+                float maxDistAttack = 0f;
+                if (IAType == TypeIA.ninja)
+                {
+                    minDistAttack = 1.5f;
+                    maxDistAttack = 3f;
+                }
+
+                if (IAType == TypeIA.tank)
+                {
+                    minDistAttack = 5f;
+                    maxDistAttack = 8f;
+                }
+
+                if (IAType == TypeIA.normal)
+                {
+                    minDistAttack = 1.5f;
+                    maxDistAttack = 8f;
+                }
+                if (dist > maxDistAttack)
+                {
+                    hunt();
+                    if( debug)
+                    {
+                        Debug.Log(dist + "  " + maxDistAttack);
+
+                    }
+                }
+                if (dist < minDistAttack)
+                {
+                    flee();
+                }
+
+
+                if (motor.canUse(Power.Melee) && (action == Actions.flee || action == Actions.hunt) &&  dist < 2f)
+                {
+                    motor.UsePower(Power.Melee);
+                }
+                if (motor.canUse(Power.Dash) && ((action == Actions.flee && dist < 9f) || (action == Actions.hunt && dist > 9f)))
+                {
+                    motor.UsePower(Power.Dash);
+                }
+                if (motor.canUse(Power.Ranged) && (action == Actions.flee || action == Actions.hunt))
+                {
+                    motor.UsePower(Power.Ranged);
+                }
+                if (motor.canUse(Power.Ranged) && (action == Actions.flee || action == Actions.hunt) && dist <= 5f)
+                {
+                    motor.UsePower(Power.Ranged);
+                }
+
             }
             else
             {
                 flee();
             }
 
-            foreach(KeyValuePair<Power, PowerStruc> _power in motor.dicPowerLvl)
-            {
-                if (_power.Value.reloadCoolDown == 0f)
-                {
-                    motor.UsePower(_power.Key);
-                }
-            }
         }
-        if (action == Actions.farm)
+        if (action == Actions.farm || action == Actions.heal)
         {
             motor.GoDir(target.transform.position);
         }
@@ -263,7 +324,8 @@ public enum Actions
     random,
     farm,
     hunt,
-    flee
+    flee,
+    heal
 }
 
 public enum TypeIA

@@ -5,7 +5,6 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public GameObject target;
-    public float speed;
     public float range;
     public int degat;
 
@@ -16,7 +15,7 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        transform.Translate((target.transform.position - transform.position).normalized * speed * Time.deltaTime);
+        transform.Translate((target.transform.position - transform.position).normalized * 20f * Time.deltaTime);
         range -= Time.deltaTime;
         if (range <= 0f)
         {
